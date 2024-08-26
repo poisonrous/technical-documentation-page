@@ -1,0 +1,170 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./styles.css">
+    <title>Spotify API Documentation</title>
+</head>
+<body>
+<nav id="navbar">
+    <header>Spotify Web API</header>
+    <ul>
+        <li><a class="nav-link" href="#Getting_started_with_Spotify_API">Getting started with Spotify API</a></li>
+        <li><a class="nav-link"  href="#Create_an_app">Create an app</a></li>
+        <li><a class="nav-link"  href="#Request_an_access_token">Request an access token</a></li>
+        <li><a class="nav-link"  href="#How_to_request_artist_data">How to request artist data</a></li>
+        <li><a class="nav-link" href="#Reference">Reference</a></li>
+    </ul>
+</nav>
+<main id="main-doc">
+    <section class="main-section" id="Getting_started_with_Spotify_API">
+        <header>Getting started with Spotify API</header>
+        <p>
+            This tutorial will help you to make your first Web API call by retriving an artist's metadata. It assumes you have a Spotify account (free or premium).
+        </p>
+        <p>
+            The first step is <strong>login to the Spotify Developer Dashboard</strong>. If necessary, read the latest Developer Terms of Service to complete your account set up.
+        </p>
+    </section>
+    <section class="main-section" id="Create_an_app">
+        <header>Create an app</header>
+        <p>An app provides the Client ID and Client Secret needed to request an access token by implementing any of the authorization flows.
+
+            To create an app, go to your Dashboard, click on the Create an app button and enter the following information:</p>
+        <ul>
+            <li>App Name: My App</li>
+            <li>App Description: This is my first Spotify app</li>
+            <li>Redirect URI: You won't need this parameter in this example, so let's use http://localhost:3000.</li>
+        </ul>
+        <p>Finally, check the Developer Terms of Service checkbox and tap on the Create button.</p>
+    </section>
+    <section class="main-section" id="Request_an_access_token">
+        <header>Request an access token</header>
+        <p>The access token is a string which contains the credentials and permissions that can be used to access a given resource (e.g artists, albums or tracks) or user's data (e.g your profile or your playlists).</p>
+        <p><strong>In order to request the access token you need to get your Client_ID and Client Secret:</strong></p>
+        <ol>
+            <li>Go to the Dashboard</li>
+            <li>Click on the name of the app you have just created (My App)</li>
+            <li>Click on the Settings button</li>
+        </ol>
+        <p>The Client ID can be found here. The Client Secret can be found behind the View client secret link.</p>
+        <p>With our credentials in hand, we are ready to request an access token. This tutorial uses the Client Credentials, so we must:</p>
+        <ul>
+            <li>Send a POST request to the token endpoint URI.</li>
+            <li>Add the Content-Type header set to the application/x-www-form-urlencoded value.</li>
+            <li>Add a HTTP body containing the Client ID and Client Secret, along with the grant_type parameter set to client_credentials.</li>
+        </ul>
+        <code>curl -X POST "https://accounts.spotify.com/api/token" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "grant_type=client_credentials&client_id=your-client-id&client_secret=your-client-secret"
+        </code>
+        <p>The response will return an access token valid for 1 hour:</p>
+        <code>{
+            "access_token": "BQDBKJ5eo5jxbtpWjVOj7ryS84khybFpP_lTqzV7uV-T_m0cTfwvdn5BnBSKPxKgEb11",
+            "token_type": "Bearer",
+            "expires_in": 3600
+            }
+        </code>
+    </section>
+    <section class="main-section" id="How_to_request_artist_data">
+        <header>How to request artist data</header>
+        <p>For this example, we will use the Get Artist endpoint to request information about an artist. According to the API Reference, the endpoint needs the Spotify ID of the artist.</p>
+        <p>An easy way to get the Spotify ID of an artist is using the Spotify Desktop App:</p>
+        <ol>
+            <li>Search the artist</li>
+            <li>Click on the three dots icon from the artist profile</li>
+            <li>Select Share > Copy link to artist. The Spotify ID is the value that comes right after the open.spotify.com/artist URI.</li>
+        </ol>
+        <p>Our API call must include the access token we have just generated using the Authorization header as follows:</p>
+        <code>curl "https://api.spotify.com/v1/artists/4Z8W4fKeB5YxbusRsdQVPb" \
+            -H "Authorization: Bearer  BQDBKJ5eo5jxbtpWjVOj7ryS84khybFpP_lTqzV7uV-T_m0cTfwvdn5BnBSKPxKgEb11"
+        </code>
+        <p>If everything goes well, the API will return the following JSON response:</p>
+        <code>{
+            "external_urls": {
+            "spotify": "https://open.spotify.com/artist/4Z8W4fKeB5YxbusRsdQVPb"
+            },
+            "followers": {
+            "href": null,
+            "total": 7625607
+            },
+            "genres": [
+            "alternative rock",
+            "art rock",
+            "melancholia",
+            "oxford indie",
+            "permanent wave",
+            "rock"
+            ],
+            "href": "https://api.spotify.com/v1/artists/4Z8W4fKeB5YxbusRsdQVPb",
+            "id": "4Z8W4fKeB5YxbusRsdQVPb",
+            "images": [
+            {
+            "height": 640,
+            "url": "https://i.scdn.co/image/ab6761610000e5eba03696716c9ee605006047fd",
+            "width": 640
+            },
+            {
+            "height": 320,
+            "url": "https://i.scdn.co/image/ab67616100005174a03696716c9ee605006047fd",
+            "width": 320
+            },
+            {
+            "height": 160,
+            "url": "https://i.scdn.co/image/ab6761610000f178a03696716c9ee605006047fd",
+            "width": 160
+            }
+            ],
+            "name": "Radiohead",
+            "popularity": 79,
+            "type": "artist",
+            "uri": "spotify:artist:4Z8W4fKeB5YxbusRsdQVPb"
+            }
+        </code>
+        <p>You can also request Spotify catalog information for several artists based on their Spotify IDs.</p>
+        <p>This is the request sample for that:</p>
+        <code>curl --request GET \
+            --url 'https://api.spotify.com/v1/artists?ids=2CIMQHirSU0MQqyYHq0eOx%2C57dN52uHvrHOxijzpIgu3E%2C1vCWHaC5f2uS3yhpwWbIA6' \
+            --header 'Authorization: Bearer 1POdFZRZbvb...qqillRxMr2z'</code>
+        <p>Then we have the next response sample:</p>
+        <code>
+            {
+            "artists": [
+            {
+            "external_urls": {
+            "spotify": "string"
+            },
+            "followers": {
+            "href": "string",
+            "total": 0
+            },
+            "genres": [
+            "Prog rock",
+            "Grunge"
+            ],
+            "href": "string",
+            "id": "string",
+            "images": [
+            {
+            "url": "https://i.scdn.co/image/ab67616d00001e02ff9ca10b55ce82ae553c8228",
+            "height": 300,
+            "width": 300
+            }
+            ],
+            "name": "string",
+            "popularity": 0,
+            "type": "artist",
+            "uri": "string"
+            }
+            ]
+            }
+        </code>
+        <p>Congratulations! You made your first API call to the Spotify Web API.</p>
+    </section>
+    <section class="main-section" id="Reference">
+        <header>Reference</header>
+        <p>All the documentation in this page is taken from <a href="https://developer.spotify.com/">Spotify for Developers</a>.</p>
+    </section>
+</main>
+</body>
+</html>
